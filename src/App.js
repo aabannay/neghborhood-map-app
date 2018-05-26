@@ -6,9 +6,18 @@ import './App.css';
 
 class App extends Component {
 
-  state = {
+  //use the constructor to make the state accessible.
+  constructor(props) {
+    super(props);
+    this.state = {
+      map: '',
+      neighborhoodLocations: require('./NeighborhoodLocations.json')
+    };
 
+    // retain object instance when used in the function
+    this.initMap = this.initMap.bind(this);
   }
+
 
   componentDidMount(){
         // Connect the initMap() function within this class to the global window context,
@@ -26,13 +35,32 @@ class App extends Component {
       center: {lat: 26.574798, lng: 49.997698},
       zoom: 13
     });
+    var locations = [];
+    var markers = [];
+    var bounds = new window.google.maps.LatLngBounds();
+    locations = this.state.neighborhoodLocations;
+    for (var i = 0; i < locations.length; i++) {
+          // Get the position from the location array.
+          var position = locations[i].location;
+          var title = locations[i].name;
+          // Create a marker per location, and put into markers array.
+          var marker = new window.google.maps.Marker({
+            map: map,
+            position: new window.google.maps.LatLng(position),
+            title: title,
+            animation: window.google.maps.Animation.DROP,
+            id: i
+          });
+          marker.setVisible(true);
+          // Push the marker to our array of markers.
+          markers.push(marker);
+          bounds.extend(markers[i].position);
+     }
+     map.fitBounds(bounds);
+     this.setState({map: map})
   }
 
-
-
   render() {
-
-
     return (
       <div className="App">
         <div id="map" ></div>
