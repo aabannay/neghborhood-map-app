@@ -18,10 +18,12 @@ class App extends Component {
         loadJS('https://maps.googleapis.com/maps/api/js?key=AIzaSyA32vABX6bd38gkheIm3O4ocWekMfrfzu0&callback=initMap');
     }
 
+
+
   initMap() {
     // Constructor creates a new map - only center and zoom are required.
     var map = new window.google.maps.Map(document.getElementById('map'), {
-      center: {lat: 40.7413549, lng: -73.9980244},
+      center: {lat: 26.574798, lng: 49.997698},
       zoom: 13
     });
   }
@@ -29,16 +31,11 @@ class App extends Component {
 
 
   render() {
-    const mapStyle = {
-      height: '100vh',
-      width: '100vw'
-    };
+
+
     return (
       <div className="App">
-        <header className="App-header">
-          <h1 className="App-title">Neghborhood Map</h1>
-        </header>
-        <div id="map" style={mapStyle}></div>
+        <div id="map" ></div>
       </div>
     );
   }
