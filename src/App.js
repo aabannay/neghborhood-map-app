@@ -11,11 +11,12 @@ class App extends Component {
     super(props);
     this.state = {
       map: '',
-      neighborhoodLocations: require('./NeighborhoodLocations.json')
+      neighborhoodLocations: require('./NeighborhoodLocations.json') //json needs to be small case in .json extension
     };
 
     // retain object instance when used in the function
     this.initMap = this.initMap.bind(this);
+    this.populateInfoWindow = this.populateInfoWindow.bind(this);
   }
 
 
@@ -30,6 +31,7 @@ class App extends Component {
 
 
   initMap() {
+    var self = this;
     // Constructor creates a new map - only center and zoom are required.
     var map = new window.google.maps.Map(document.getElementById('map'), {
       center: {lat: 26.574798, lng: 49.997698},
@@ -37,6 +39,7 @@ class App extends Component {
     });
     var locations = [];
     var markers = [];
+    var locationInfoWindow = new window.google.maps.InfoWindow();
     var bounds = new window.google.maps.LatLngBounds();
     locations = this.state.neighborhoodLocations;
     for (var i = 0; i < locations.length; i++) {
@@ -51,13 +54,28 @@ class App extends Component {
             animation: window.google.maps.Animation.DROP,
             id: i
           });
-          marker.setVisible(true);
+          //marker.setVisible(true);
+          marker.addListener('click', function() {
+            self.populateInfoWindow(this, locationInfoWindow, self.map);
+          });
           // Push the marker to our array of markers.
           markers.push(marker);
           bounds.extend(markers[i].position);
      }
      map.fitBounds(bounds);
      this.setState({map: map})
+  }
+
+  populateInfoWindow(marker, infowindow, map) {
+    if (infowindow.marker != marker) {
+        infowindow.marker = marker;
+        infowindow.setContent('<div>' + marker.title + '</div>');
+        infowindow.open(map, marker);
+        // Make sure the marker property is cleared if the infowindow is closed.
+        infowindow.addListener('closeclick',function(){
+          infowindow.setMarker = null;
+        });
+      }
   }
 
   render() {
