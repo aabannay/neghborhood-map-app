@@ -11,12 +11,14 @@ class App extends Component {
     super(props);
     this.state = {
       map: '',
-      neighborhoodLocations: require('./NeighborhoodLocations.json') //json needs to be small case in .json extension
+      neighborhoodLocations: require('./NeighborhoodLocations.json'), //json needs to be small case in .json extension
+      content: '',
     };
 
     // retain object instance when used in the function
     this.initMap = this.initMap.bind(this);
     this.populateInfoWindow = this.populateInfoWindow.bind(this);
+    this.get4SContent = this.get4SContent.bind(this);
   }
 
 
@@ -67,15 +69,67 @@ class App extends Component {
   }
 
   populateInfoWindow(marker, infowindow, map) {
-    if (infowindow.marker != marker) {
+    infowindow.setContent('');
+    var self = this;
+    if (infowindow.marker !== marker) {
         infowindow.marker = marker;
-        infowindow.setContent('<div>' + marker.title + '</div>');
+
+        //set the content of the info window from four square API
+        self.get4SContent(marker, infowindow);
         infowindow.open(map, marker);
         // Make sure the marker property is cleared if the infowindow is closed.
         infowindow.addListener('closeclick',function(){
           infowindow.setMarker = null;
         });
       }
+  }
+
+  get4SContent(marker, infowindow) {
+    var self = this;
+    //set the request for the api
+    let request = `https://api.foursquare.com/v2/venues/search?` +
+    `client_id=` + 'YDRHIIJHXFVM0AJUNHU14FMMKSASBCXAK3SDYCUOXNYFG4WU' +
+    `&client_secret=` + 'BEF01AIDLJ3YZR1S3DKXNKTVEGVI2TFENLKT1RCQK4VJEFTC' +
+    `&ll=` + marker.getPosition().lat() +`,` + marker.getPosition().lng() +
+    `&v=20180527`;
+
+    var content = null;
+    //fetch the request using fitch API
+    fetch(request)
+    .then((response) => {
+
+      //check if the response was not successful
+      if (response.status !== 200) {
+
+        console.log('Fetch request to foursquare was not successful!');
+        return(<span>Failed to load location details</span>);
+      }
+      //otherwise successful
+      return response.json();
+    }).then((data) => {
+        if (data.response.venues){
+        //the list of venues returned by the search query.
+        var venues = data.response.venues;
+        //first venue
+        var theVenue = venues[0];
+        //properties of the first venue
+        var id = theVenue.id;
+        var name = theVenue.name;
+        var formattedAddress = '';
+        //construct the address from the array in formattedAddress JSON.
+        if (theVenue.location.formattedAddress) {
+          for (let line of theVenue.location.formattedAddress) {
+            formattedAddress += line + '</br>'; //new line in html to be used inside <p> element
+          }
+        }
+        var foursquareUrl = `https://foursquare.com/v/${id}`;
+
+        infowindow.setContent(`<p><strong>Title: </strong>${name}</p>
+                <p><strong>Address: </strong>${formattedAddress}</p>
+                <a href=${foursquareUrl}>Location on Foursquare</a>`);
+        console.log(data.response.venues[0]);
+      }
+    })
   }
 
   render() {
