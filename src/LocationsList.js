@@ -7,7 +7,6 @@ class LocationsList extends Component {
         locations: [],
         currentFilter: ''
       }
-
       this.filterLocations = this.filterLocations.bind(this);
   }
 
@@ -21,8 +20,6 @@ class LocationsList extends Component {
   filterLocations(event) {
     var shownLocations = [];
     this.props.locations.forEach((location) => {
-      console.log(event.target.value)
-      console.log(location.business)
       if (location.business == event.target.value || event.target.value === 'all') {
         location.marker.setVisible(true);
         shownLocations.push(location);
@@ -37,7 +34,6 @@ class LocationsList extends Component {
 
 
   render () {
-    console.log(this.state.locations)
     return (
       <div className="filter">
         <span>Apply Filter to Locations  </span>
