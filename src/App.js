@@ -42,14 +42,16 @@ class App extends Component {
       zoom: 13
     });
     var locations = [];
+    var locationsUpdated = [];
     var markers = [];
     var locationInfoWindow = new window.google.maps.InfoWindow();
     var bounds = new window.google.maps.LatLngBounds();
     locations = this.state.neighborhoodLocations;
     for (var i = 0; i < locations.length; i++) {
           // Get the position from the location array.
-          var position = locations[i].location;
-          var title = locations[i].name;
+          var currentLocation = locations[i];
+          var position = currentLocation.location;
+          var title = currentLocation.name;
           // Create a marker per location, and put into markers array.
           var marker = new window.google.maps.Marker({
             map: map,
@@ -67,6 +69,9 @@ class App extends Component {
           // Push the marker to our array of markers.
           markers.push(marker);
           bounds.extend(markers[i].position);
+          currentLocation.marker = marker;
+
+          locationsUpdated.push(currentLocation);
      }
      map.fitBounds(bounds);
      this.setState({map: map})
@@ -101,10 +106,8 @@ class App extends Component {
     //fetch the request using fitch API
     fetch(request)
     .then((response) => {
-
       //check if the response was not successful
       if (response.status !== 200) {
-
         console.log('Fetch request to foursquare was not successful!');
         infowindow.setContent(`<strong>Error Loading data</strong>`);
       }

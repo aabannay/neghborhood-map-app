@@ -4,8 +4,11 @@ class LocationsList extends Component {
   constructor(props) {
       super(props);
       this.state = {
-        locations: []
+        locations: [],
+        currentFilter: ''
       }
+
+      this.filterLocations = this.filterLocations.bind(this);
   }
 
   componentDidMount() {
@@ -13,12 +16,32 @@ class LocationsList extends Component {
       locations: this.props.locations
     })
   }
-  render () {
 
+ //do this when locations are filtered
+  filterLocations(event) {
+    var shownLocations = [];
+    this.props.locations.forEach((location) => {
+      console.log(event.target.value)
+      console.log(location.business)
+      if (location.business == event.target.value || event.target.value === 'all') {
+        location.marker.setVisible(true);
+        shownLocations.push(location);
+      } else {
+        location.marker.setVisible(false);
+      }
+    })
+    this.setState({
+      locations: shownLocations
+    })
+  }
+
+
+  render () {
+    console.log(this.state.locations)
     return (
       <div className="filter">
         <span>Apply Filter to Locations  </span>
-        <select>
+        <select onChange={(event) => (this.filterLocations(event))}>
           <option value="" disabled>filter locations</option>
           <option value="all">All</option>
           <option value="restaurants">Restaurants</option>
