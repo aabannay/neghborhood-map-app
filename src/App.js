@@ -2,7 +2,9 @@
 //https://www.klaasnotfound.com/2016/11/06/making-google-maps-work-with-react/
 
 import React, { Component } from 'react';
+import LocationsList from './LocationsList'
 import './App.css';
+
 
 class App extends Component {
 
@@ -56,6 +58,8 @@ class App extends Component {
             animation: window.google.maps.Animation.DROP,
             id: i
           });
+          //set animations to the marker
+          marker.setAnimation()
           //marker.setVisible(true);
           marker.addListener('click', function() {
             self.populateInfoWindow(this, locationInfoWindow, self.map);
@@ -85,15 +89,15 @@ class App extends Component {
   }
 
   get4SContent(marker, infowindow) {
-    var self = this;
+
     //set the request for the api
     let request = `https://api.foursquare.com/v2/venues/search?` +
-    `client_id=` + 'YDRHIIJHXFVM0AJUNHU14FMMKSASBCXAK3SDYCUOXNYFG4WU' +
-    `&client_secret=` + 'BEF01AIDLJ3YZR1S3DKXNKTVEGVI2TFENLKT1RCQK4VJEFTC' +
+    `client_id=YDRHIIJHXFVM0AJUNHU14FMMKSASBCXAK3SDYCUOXNYFG4WU
+    &client_secret=BEF01AIDLJ3YZR1S3DKXNKTVEGVI2TFENLKT1RCQK4VJEFTC` +
     `&ll=` + marker.getPosition().lat() +`,` + marker.getPosition().lng() +
     `&v=20180527`;
 
-    var content = null;
+
     //fetch the request using fitch API
     fetch(request)
     .then((response) => {
@@ -102,7 +106,7 @@ class App extends Component {
       if (response.status !== 200) {
 
         console.log('Fetch request to foursquare was not successful!');
-        return(<span>Failed to load location details</span>);
+        infowindow.setContent(`<strong>Error Loading data</strong>`);
       }
       //otherwise successful
       return response.json();
@@ -135,6 +139,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+        <LocationsList locations={this.state.neighborhoodLocations}/>
         <div id="map" ></div>
       </div>
     );
