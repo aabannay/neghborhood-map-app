@@ -8,6 +8,7 @@ class LocationsList extends Component {
         currentFilter: ''
       }
       this.filterLocations = this.filterLocations.bind(this);
+      this.clickedItem = this.clickedItem.bind(this);
   }
 
   componentDidMount() {
@@ -20,7 +21,7 @@ class LocationsList extends Component {
   filterLocations(event) {
     var shownLocations = [];
     this.props.locations.forEach((location) => {
-      if (location.business == event.target.value || event.target.value === 'all') {
+      if (location.business === event.target.value || event.target.value === 'all') {
         location.marker.setVisible(true);
         shownLocations.push(location);
       } else {
@@ -32,6 +33,16 @@ class LocationsList extends Component {
     })
   }
 
+  clickedItem(location) {
+    console.log(this.state.firstClick)
+        if (location.marker.getAnimation() !== null &&
+            location.marker.getAnimation() === window.google.maps.Animation.BOUNCE) {
+          location.marker.setAnimation(null);
+        } else {
+          location.marker.setAnimation(window.google.maps.Animation.BOUNCE);
+
+        }
+  }
 
   render () {
     return (
@@ -47,7 +58,7 @@ class LocationsList extends Component {
         <ul>
         {this.state.locations.map((location, index) => (
             <li key={index}>
-              <p>{location.name}</p>
+              <button onClick={() => this.clickedItem(location)}>{location.name}</button>
             </li>
           ))}
         </ul>
