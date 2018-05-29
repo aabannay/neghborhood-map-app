@@ -12,15 +12,18 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      map: '',
+      map: null,
       neighborhoodLocations: require('./NeighborhoodLocations.json'), //json needs to be small case in .json extension
-      content: '',
+      infowindow: null,
+      currentMarker: null
     };
 
     // retain object instance when used in the function
     this.initMap = this.initMap.bind(this);
     this.populateInfoWindow = this.populateInfoWindow.bind(this);
     this.get4SContent = this.get4SContent.bind(this);
+    this.closeInfowindow = this.closeInfowindow.bind(this);
+    this.filterWasApplied = this.filterWasApplied.bind(this);
   }
 
 
@@ -41,10 +44,10 @@ class App extends Component {
       center: {lat: 26.574798, lng: 49.997698},
       zoom: 13
     });
+    this.setState({map: map});
     var locations = [];
     var locationsUpdated = [];
     var markers = [];
-    var locationInfoWindow = new window.google.maps.InfoWindow();
     var bounds = new window.google.maps.LatLngBounds();
     locations = this.state.neighborhoodLocations;
     for (var i = 0; i < locations.length; i++) {
@@ -60,11 +63,14 @@ class App extends Component {
             animation: window.google.maps.Animation.DROP,
             id: i
           });
-          //set animations to the marker
-          marker.setAnimation()
-          //marker.setVisible(true);
+
+          //create an info window and add it to state
+          var infowindow = new window.google.maps.InfoWindow();
+          self.setState({
+            infowindow: infowindow
+          })
           marker.addListener('click', function() {
-            self.populateInfoWindow(this, locationInfoWindow, self.map);
+            self.populateInfoWindow(this);
           });
           // Push the marker to our array of markers.
           markers.push(marker);
@@ -74,25 +80,73 @@ class App extends Component {
           locationsUpdated.push(currentLocation);
      }
      map.fitBounds(bounds);
-     this.setState({map: map})
+
   }
 
-  populateInfoWindow(marker, infowindow, map) {
+  populateInfoWindow(marker) {
+    var { infowindow } = this.state
+    //clear previous content if any
     infowindow.setContent('');
-    var self = this;
-    if (infowindow.marker !== marker) {
-        infowindow.marker = marker;
-
-        //set the content of the info window from four square API
-        self.get4SContent(marker, infowindow);
-        infowindow.open(map, marker);
-        // Make sure the marker property is cleared if the infowindow is closed.
-        infowindow.addListener('closeclick',function(){
-          infowindow.setMarker = null;
-        });
-      }
+    //attach info window to the marker
+    infowindow.marker = marker;
+    //set the content of the info window from four square API
+    this.get4SContent(marker, infowindow);
+    infowindow.open(this.state.map, marker);
+    // Make sure the marker property is cleared if the infowindow is closed.
+    infowindow.addListener('closeclick',function(){
+      infowindow.marker = null;
+    });
   }
 
+  closeInfowindow() {
+    this.state.infowindow.close();
+  }
+
+  clickedItem(location) {
+    //the marker was clicked before and its bouncing
+    if (location.marker.getAnimation() === window.google.maps.Animation.BOUNCE) {
+      //stop bouncing
+      location.marker.setAnimation(null);
+      //close the marker infowindow
+      this.closeInfowindow();
+      //clear the current opened marker
+      this.setState({
+        currentMarker: null
+      })
+    } else {
+      //stop bouncing if there is another marker opened before
+      if (this.state.currentMarker !== null) {
+        this.state.currentMarker.setAnimation(null);
+      }
+      //set the current opened marker to this marker
+      this.setState({
+        currentMarker: location.marker
+      })
+      //bounce!
+      location.marker.setAnimation(window.google.maps.Animation.BOUNCE);
+      //open the info window
+      this.populateInfoWindow(location.marker);
+    }
+  }
+
+  //if filter was applied then check
+  filterWasApplied(filterValue, clickedLocation) {
+    if (clickedLocation!== null) { //there was a location clicked when the filter was applied
+      if (filterValue !== clickedLocation.business && //the filter is different business
+                                                      //from clicked location
+          filterValue !=='all') {//the filter is not all
+        //if so then act like if the location was clicked again to close the
+        //info window and stop the bouncing
+        clickedLocation.marker.setAnimation(null);
+        //close the marker infowindow
+        this.closeInfowindow();
+        //clear the current opened marker
+        this.setState({
+          currentMarker: null
+        })
+      }
+    }
+  }
   get4SContent(marker, infowindow) {
 
     //set the request for the api
@@ -134,7 +188,6 @@ class App extends Component {
         infowindow.setContent(`<p><strong>Title: </strong>${name}</p>
                 <p><strong>Address: </strong>${formattedAddress}</p>
                 <a href=${foursquareUrl}>Location on Foursquare</a>`);
-        console.log(data.response.venues[0]);
       }
     })
   }
@@ -142,7 +195,10 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <LocationsList locations={this.state.neighborhoodLocations}/>
+        <LocationsList locations={this.state.neighborhoodLocations}
+                       closeInfowindow={this.closeInfowindow.bind(this)}
+                       clickedItem={this.clickedItem.bind(this)}
+                       filterWasApplied={this.filterWasApplied.bind(this)}/>
         <div id="map" ></div>
       </div>
     );

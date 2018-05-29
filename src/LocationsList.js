@@ -5,10 +5,10 @@ class LocationsList extends Component {
       super(props);
       this.state = {
         locations: [],
-        currentFilter: ''
+        currentFilter: '',
+        clickedLocation: null
       }
       this.filterLocations = this.filterLocations.bind(this);
-      this.clickedItem = this.clickedItem.bind(this);
   }
 
   componentDidMount() {
@@ -19,6 +19,8 @@ class LocationsList extends Component {
 
  //do this when locations are filtered
   filterLocations(event) {
+    //notify app logic that filter was applied to deal with info windows opened and bouncing
+    this.props.filterWasApplied(event.target.value, this.state.clickedLocation)
     var shownLocations = [];
     this.props.locations.forEach((location) => {
       if (location.business === event.target.value || event.target.value === 'all') {
@@ -33,16 +35,7 @@ class LocationsList extends Component {
     })
   }
 
-  clickedItem(location) {
-    console.log(this.state.firstClick)
-        if (location.marker.getAnimation() !== null &&
-            location.marker.getAnimation() === window.google.maps.Animation.BOUNCE) {
-          location.marker.setAnimation(null);
-        } else {
-          location.marker.setAnimation(window.google.maps.Animation.BOUNCE);
 
-        }
-  }
 
   render () {
     return (
@@ -58,7 +51,8 @@ class LocationsList extends Component {
         <ul>
         {this.state.locations.map((location, index) => (
             <li key={index}>
-              <button onClick={() => this.clickedItem(location)}>{location.name}</button>
+              <button onClick={() => {this.props.clickedItem(location);
+                                      this.setState({clickedLocation: location})}}>{location.name}</button>
             </li>
           ))}
         </ul>
