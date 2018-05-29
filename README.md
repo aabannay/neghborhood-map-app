@@ -14,5 +14,5 @@ This can be used by doing the following:
 Contributions are welcome!
 
 ## References
-1. (Google Maps API)[https://developers.google.com/maps/documentation/javascript/tutorial]
-2. (Foursquare API)[https://foursquare.com/developers/explore]
+1. [Google Maps API](https://developers.google.com/maps/documentation/javascript/tutorial)
+2. [Foursquare API](https://foursquare.com/developers/explore)
