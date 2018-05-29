@@ -13,8 +13,30 @@
 .filter {
         padding: 5px;
       }
+.select-location {
+  border: orange;
+  border-style: solid;
+  border: 1px;
+  background: #444;
+  color: white;
+  height: 25px;
+  width: auto;
+}
 
+.location-item {
+  border: black;
+  border-style: solid;
+  border: 1px;
+  background: green;
+  color: white;
+  height: 25px;
+  width: auto;
+  margin-bottom: 5px;
+}
 
+.no-locations {
+  color: red; 
+}
 #map {
   z-index: 1;
   height: 90vh;

@@ -9,6 +9,7 @@ class LocationsList extends Component {
         clickedLocation: null
       }
       this.filterLocations = this.filterLocations.bind(this);
+      this.listItems = this.listItems.bind(this);
   }
 
   componentDidMount() {
@@ -35,13 +36,28 @@ class LocationsList extends Component {
     })
   }
 
-
+ listItems(props) {
+   if (this.state.locations.length >= 1) {
+     return (this.state.locations.map((location, index) => (
+         <li key={index}>
+           <button className="location-item" tabIndex={index+2}
+             area-label={`View details for ${location.name}`}
+             onClick={() => {this.props.clickedItem(location);
+                             this.setState({clickedLocation: location})}}>
+             {location.name}
+           </button>
+         </li>
+     )));} else {
+       return (<span className="no-locations">No locations to show!</span>);
+     }
+ }
 
   render () {
+    console.log(this.state.locations)
     return (
       <div className="filter" role="heading">
         <span>Apply Filter to Locations  </span>
-        <select aria-label="Select location filter" tabIndex={1} onChange={(event) => (this.filterLocations(event))}>
+        <select className="select-location" aria-label="Select location filter" tabIndex={1} onChange={(event) => (this.filterLocations(event))}>
           <option aria-label="select one of the following filters" value="" disabled>filter locations</option>
           <option aria-label="select all locations"value="all">All</option>
           <option aria-label="select restaurants only" value="restaurants">Restaurants</option>
@@ -49,14 +65,7 @@ class LocationsList extends Component {
           <option aria-label="select traditional locations only" value="traditional">Traditional Locations</option>
         </select>
         <ul>
-        {this.state.locations.map((location, index) => (
-            <li key={index}>
-              <button tabIndex={index+2}
-              area-label={`View details for ${location.name}`}
-              onClick={() => {this.props.clickedItem(location);
-                              this.setState({clickedLocation: location})}}>{location.name}</button>
-            </li>
-          ))}
+          {this.listItems()}
         </ul>
       </div>
 

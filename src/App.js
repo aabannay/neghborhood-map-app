@@ -84,7 +84,6 @@ class App extends Component {
   }
 
   populateInfoWindow(marker) {
-    var self = this;
     var { infowindow } = this.state
     //clear previous content if any
     infowindow.setContent('');
