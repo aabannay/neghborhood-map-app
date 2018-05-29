@@ -84,6 +84,7 @@ class App extends Component {
   }
 
   populateInfoWindow(marker) {
+    var self = this;
     var { infowindow } = this.state
     //clear previous content if any
     infowindow.setContent('');
@@ -94,6 +95,7 @@ class App extends Component {
     infowindow.open(this.state.map, marker);
     // Make sure the marker property is cleared if the infowindow is closed.
     infowindow.addListener('closeclick',function(){
+      marker.setAnimation(null);
       infowindow.marker = null;
     });
   }
@@ -194,12 +196,12 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
+      <div className="App" role="main">
         <LocationsList locations={this.state.neighborhoodLocations}
                        closeInfowindow={this.closeInfowindow.bind(this)}
                        clickedItem={this.clickedItem.bind(this)}
                        filterWasApplied={this.filterWasApplied.bind(this)}/>
-        <div id="map" ></div>
+        <div id="map" role="region" aria-label="Map of the Neighborhood Locations"></div>
       </div>
     );
   }
