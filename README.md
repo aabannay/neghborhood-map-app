@@ -10,7 +10,7 @@ This can be used by doing the following:
 3. run it using npm start
 
 
-##C ontributing
+## Contributing
 Contributions are welcome!
 
 ## References
