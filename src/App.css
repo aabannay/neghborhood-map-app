@@ -35,8 +35,9 @@
 }
 
 .no-locations {
-  color: red; 
+  color: red;
 }
+
 #map {
   z-index: 1;
   height: 90vh;

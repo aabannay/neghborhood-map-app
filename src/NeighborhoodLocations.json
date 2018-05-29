@@ -6,9 +6,23 @@
     "business": "restaurants"
 },
 {
-  "name": "Noor Restaurant",
+  "name": "Shandeez BBQ",
   "location": {
-    "lat": 26.569521,
-    "lng": 49.993224},
+    "lat": 26.570451,
+    "lng": 49.992768},
     "business": "restaurants"
+},
+{
+  "name": "Center Point",
+  "location": {
+    "lat": 26.566873,
+    "lng": 50.001086},
+    "business": "malls"
+},
+{
+  "name": "Mias Market",
+  "location": {
+    "lat": 26.556446,
+    "lng": 50.003839},
+    "business": "traditional"
 }]
