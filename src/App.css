@@ -11,8 +11,9 @@
 }
 
 .filter {
-        padding: 5px;
-      }
+  padding: 5px;
+  min-height: 187px;
+}
 .select-location {
   border: orange;
   border-style: solid;
@@ -40,6 +41,6 @@
 
 #map {
   z-index: 1;
-  height: 90vh;
+  height: calc(100vh - 187px);
   width: 100vw;
 }
