@@ -123,6 +123,7 @@ class App extends Component {
       this.setState({
         currentMarker: location.marker
       })
+      this.state.map.setCenter(location.marker.position)
       //bounce!
       location.marker.setAnimation(window.google.maps.Animation.BOUNCE);
       //open the info window
