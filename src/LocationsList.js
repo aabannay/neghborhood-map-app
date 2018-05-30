@@ -53,7 +53,6 @@ class LocationsList extends Component {
  }
 
   render () {
-    console.log(this.state.locations)
     return (
       <div className="filter" role="heading">
         <span>Apply Filter to Locations  </span>
