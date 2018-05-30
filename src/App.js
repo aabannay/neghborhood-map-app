@@ -12,6 +12,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      keys: require('./keys.json'), //json file containing the api keys
       map: null,
       neighborhoodLocations: require('./NeighborhoodLocations.json'), //json needs to be small case in .json extension
       infowindow: null,
@@ -32,7 +33,7 @@ class App extends Component {
         // so Google Maps can invoke it
         window.initMap = this.initMap;
         // Asynchronously load the Google Maps script, passing in the callback reference
-        loadJS('https://maps.googleapis.com/maps/api/js?key=AIzaSyA32vABX6bd38gkheIm3O4ocWekMfrfzu0&callback=initMap');
+        loadJS(`https://maps.googleapis.com/maps/api/js?key=${this.state.keys.googleMapsKey}&callback=initMap`);
     }
 
 
@@ -153,8 +154,8 @@ class App extends Component {
 
     //set the request for the api
     let request = `https://api.foursquare.com/v2/venues/search?` +
-    `client_id=YDRHIIJHXFVM0AJUNHU14FMMKSASBCXAK3SDYCUOXNYFG4WU
-    &client_secret=BEF01AIDLJ3YZR1S3DKXNKTVEGVI2TFENLKT1RCQK4VJEFTC` +
+    `client_id=${this.state.keys.foursquareClientId}
+    &client_secret=${this.state.keys.foursquareClientSecret}` +
     `&ll=` + marker.getPosition().lat() +`,` + marker.getPosition().lng() +
     `&v=20180527`;
 
