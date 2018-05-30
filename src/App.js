@@ -199,7 +199,7 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App" role="main">
+      <div className="App" role="application">
         <LocationsList locations={this.state.neighborhoodLocations}
                        closeInfowindow={this.closeInfowindow.bind(this)}
                        clickedItem={this.clickedItem.bind(this)}
