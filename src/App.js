@@ -192,6 +192,8 @@ class App extends Component {
                 <p><strong>Address: </strong>${formattedAddress}</p>
                 <a href=${foursquareUrl}>Location on Foursquare</a>`);
       }
+    }).catch(exception => {
+      alert.show(exception);
     })
   }
 
